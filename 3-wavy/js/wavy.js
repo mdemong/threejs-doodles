@@ -1,6 +1,19 @@
+
+/*
+ * PROJECT 4: WAVY
+ *
+ * This project creates a plane and updates it so it's all wavy and stuff.
+ * 
+ * Neato!
+ */
+
 /*
     TODO: I need some sort of way to update the normal vectors of the plane... 
     It seems like they aren't being modified by vertex changes.
+*/
+
+/*
+    TODO: Add sliders to mess with the parameters.
 */
 
 let camera, scene, renderer;
