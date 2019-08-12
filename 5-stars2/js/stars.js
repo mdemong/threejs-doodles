@@ -1,10 +1,11 @@
 const STAR_SIZE = 0.12;
 
-let camera, scene, renderer;
+let camera, scene, composer;
 let farClip = 100;
 let density = 10;
 let speed = 0.2;
 let spread = 500;
+let abbEffect, abbEffectPass;
 
 // Treat like a queue; push and shift 
 let stars = []
@@ -13,6 +14,7 @@ init();
 animate();
 
 function init() {
+    
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, farClip);
@@ -21,8 +23,19 @@ function init() {
         addMultStars(-i);
     }
 
-    renderer = new THREE.WebGLRenderer({ antialias: true, canvas: jsCanvas });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    abbEffect = new POSTPROCESSING.ChromaticAberrationEffect();
+    abbEffectPass = new POSTPROCESSING.EffectPass(camera, abbEffect);
+    
+    abbEffectPass.renderToScreen = true;
+
+    console.log(abbEffect);
+    console.log(abbEffectPass);
+
+    composer = new POSTPROCESSING.EffectComposer(new THREE.WebGLRenderer({ antialias: true, canvas: jsCanvas }));
+    composer.setSize(window.innerWidth, window.innerHeight);
+
+    composer.addPass(new POSTPROCESSING.RenderPass(scene, camera));
+    // composer.addPass(abbEffectPass);
 
     window.addEventListener("resize", onWindowResize, false);
 }
@@ -32,7 +45,7 @@ function animate() {
     addMultStars(camera.position.z - farClip);
     animateStars();
     camera.translateZ(-speed);
-    renderer.render(scene, camera);
+    composer.render(scene, camera);
     removeLayer();
 }
 
@@ -72,5 +85,5 @@ function removeLayer() {
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    composer.setSize( window.innerWidth, window.innerHeight );
 }
