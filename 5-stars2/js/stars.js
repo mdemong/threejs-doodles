@@ -1,11 +1,12 @@
-const STAR_SIZE = 0.12;
+const STAR_SIZE = 0.15;
+const clock = new THREE.Clock();
 
 let camera, scene, composer;
 let farClip = 100;
 let density = 10;
 let speed = 0.2;
 let spread = 500;
-let abbEffect, abbEffectPass;
+let abbEffect, abbEffectPass, renderPass;
 
 // Treat like a queue; push and shift 
 let stars = []
@@ -23,20 +24,29 @@ function init() {
         addMultStars(-i);
     }
 
+    renderPass = new POSTPROCESSING.RenderPass(scene, camera);
+
     abbEffect = new POSTPROCESSING.ChromaticAberrationEffect();
+    abbEffect.offset = new THREE.Vector2(10, 10);
     abbEffectPass = new POSTPROCESSING.EffectPass(camera, abbEffect);
+
+    const effectPass = new POSTPROCESSING.EffectPass(camera, new POSTPROCESSING.BloomEffect());
+    effectPass.renderToScreen = true;
     
+    renderPass.renderToScreen = true;
+    renderPass.clear = false;
     abbEffectPass.renderToScreen = true;
 
     console.log(abbEffect);
     console.log(abbEffectPass);
+    console.log(renderPass);
 
     composer = new POSTPROCESSING.EffectComposer(new THREE.WebGLRenderer({ antialias: true, canvas: jsCanvas }));
     composer.setSize(window.innerWidth, window.innerHeight);
 
-    composer.addPass(new POSTPROCESSING.RenderPass(scene, camera));
-    // composer.addPass(abbEffectPass);
-
+    composer.addPass(renderPass);
+    // composer.addPass(effectPass);
+    
     window.addEventListener("resize", onWindowResize, false);
 }
 
@@ -45,7 +55,7 @@ function animate() {
     addMultStars(camera.position.z - farClip);
     animateStars();
     camera.translateZ(-speed);
-    composer.render(scene, camera);
+    composer.render(clock.getDelta());
     removeLayer();
 }
 
