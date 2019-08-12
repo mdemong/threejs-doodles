@@ -45,6 +45,7 @@ function init() {
     composer.setSize(window.innerWidth, window.innerHeight);
 
     composer.addPass(renderPass);
+    // // TODO: why does this cause rendering to break?
     // composer.addPass(effectPass);
     
     window.addEventListener("resize", onWindowResize, false);
