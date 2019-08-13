@@ -1,13 +1,15 @@
-const STAR_SIZE = 0.15;
+const STAR_SIZE = 0.2;
 const clock = new THREE.Clock();
 
 let camera, scene, composer;
+let nearClip = 0.1
 let farClip = 100;
 let density = 10;
 let speed = 0.2;
 let spread = 500;
 let abbEffect, abbEffectPass, renderPass, bloomEffectPass;
 let abbIndex = 0;
+let fog;
 
 // Treat like a queue; push and shift 
 let stars = []
@@ -19,11 +21,14 @@ function init() {
     
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, farClip);
+    camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, nearClip, farClip);
     camera.position.set(0, 0, 0);
     for (let i = 0; i < farClip; i += speed) {
         addMultStars(-i);
     }
+
+    fog = new THREE.Fog(new THREE.Color(0x000000), nearClip, farClip);
+    scene.fog = fog;
 
     renderPass = new POSTPROCESSING.RenderPass(scene, camera);
 
