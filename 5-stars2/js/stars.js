@@ -7,6 +7,7 @@ let density = 10;
 let speed = 0.2;
 let spread = 500;
 let abbEffect, abbEffectPass, renderPass, bloomEffectPass;
+let abbIndex = 0;
 
 // Treat like a queue; push and shift 
 let stars = []
@@ -51,11 +52,13 @@ function init() {
 }
 
 function animate() {
+    deltaT = clock.getDelta()
     requestAnimationFrame(animate);
     addMultStars(camera.position.z - farClip);
     animateStars();
     camera.translateZ(-speed);
-    composer.render(clock.getDelta());
+    modulateAbberation(deltaT);
+    composer.render(deltaT);
     removeLayer();
 }
 
@@ -65,6 +68,11 @@ function animateStars() {
         star.position.y += Math.sin(theta) * .035;
         star.position.x += Math.cos(theta) * .035;
     }
+}
+
+function modulateAbberation(deltaT) {
+    abbIndex += deltaT
+    abbEffect.offset = new THREE.Vector2(Math.sin(abbIndex) * 0.002, 0);
 }
 
 function addMultStars(posZ) {
