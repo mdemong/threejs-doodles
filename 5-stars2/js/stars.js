@@ -69,7 +69,7 @@ function animate() {
 
 function animateStars() {
     for (var star of stars) {
-        let theta = (star.position.z - camera.position.z) / 8
+        let theta = (star.position.z - camera.position.z) / 16
         star.position.y += Math.sin(theta) * .035;
         star.position.x += Math.cos(theta) * .035;
     }
