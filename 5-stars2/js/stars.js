@@ -6,7 +6,7 @@ let farClip = 100;
 let density = 10;
 let speed = 0.2;
 let spread = 500;
-let abbEffect, abbEffectPass, renderPass;
+let abbEffect, abbEffectPass, renderPass, bloomEffectPass;
 
 // Treat like a queue; push and shift 
 let stars = []
@@ -27,15 +27,10 @@ function init() {
     renderPass = new POSTPROCESSING.RenderPass(scene, camera);
 
     abbEffect = new POSTPROCESSING.ChromaticAberrationEffect();
-    abbEffect.offset = new THREE.Vector2(10, 10);
+    abbEffect.offset = new THREE.Vector2(.0015, 0);
     abbEffectPass = new POSTPROCESSING.EffectPass(camera, abbEffect);
 
-    const effectPass = new POSTPROCESSING.EffectPass(camera, new POSTPROCESSING.BloomEffect());
-    effectPass.renderToScreen = true;
-    
-    renderPass.renderToScreen = true;
-    renderPass.clear = false;
-    abbEffectPass.renderToScreen = true;
+    bloomEffectPass = new POSTPROCESSING.EffectPass(camera, new POSTPROCESSING.BloomEffect());
 
     console.log(abbEffect);
     console.log(abbEffectPass);
@@ -45,8 +40,12 @@ function init() {
     composer.setSize(window.innerWidth, window.innerHeight);
 
     composer.addPass(renderPass);
-    // // TODO: why does this cause rendering to break?
-    // composer.addPass(effectPass);
+    composer.addPass(abbEffectPass);
+    composer.addPass(bloomEffectPass);
+    
+    renderPass.renderToScreen = false;
+    abbEffectPass.renderToScreen = false;
+    bloomEffectPass.renderToScreen = true;
     
     window.addEventListener("resize", onWindowResize, false);
 }
