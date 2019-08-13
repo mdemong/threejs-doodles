@@ -41,12 +41,12 @@ function init() {
     composer.setSize(window.innerWidth, window.innerHeight);
 
     composer.addPass(renderPass);
-    composer.addPass(abbEffectPass);
     composer.addPass(bloomEffectPass);
+    composer.addPass(abbEffectPass);
     
     renderPass.renderToScreen = false;
-    abbEffectPass.renderToScreen = false;
-    bloomEffectPass.renderToScreen = true;
+    bloomEffectPass.renderToScreen = false;
+    abbEffectPass.renderToScreen = true;
     
     window.addEventListener("resize", onWindowResize, false);
 }
@@ -71,8 +71,8 @@ function animateStars() {
 }
 
 function modulateAbberation(deltaT) {
-    abbIndex += deltaT
-    abbEffect.offset = new THREE.Vector2(Math.sin(abbIndex) * 0.002, 0);
+    abbIndex += deltaT * 1.5
+    abbEffect.offset = new THREE.Vector2(Math.abs(Math.sin(abbIndex) * 0.0007), 0);
 }
 
 function addMultStars(posZ) {
